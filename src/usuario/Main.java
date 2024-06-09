@@ -1,4 +1,4 @@
-package empresa;
+package usuario;
 
 public class Main {
 
