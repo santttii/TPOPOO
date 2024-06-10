@@ -1,15 +1,32 @@
 package Empresa;
-import java.util.Date;
 
-public class Venta {
+import java.util.ArrayList;
+
+public abstract class Venta {
 	private int id;
-    private Date fecha;
-    private double montoTotal;
-    private Usuario usuario;
-    private MedioPago medioPago;
-    private String detalles;
+	private String fecha;
+	private double montoTotal;
+	ArrayList<Autoparte> autopartepedido;
+	ArrayList<Integer> autoparteCantidad;
+	
+	public Venta(int id, String fecha, double montoTotal) {
+		setId(id);
+		setFecha(fecha);
+		setMontoTotal(montoTotal);
+		autopartepedido = new ArrayList<Autoparte>();
+		autoparteCantidad = new ArrayList<>();
+	}
+	
 
-    public int getId() {
+	public void CargarAutopartePed(Autoparte autoparte) {
+		autopartepedido.add(autoparte);
+	}
+	
+	public void CargarCantidadPed(int cant) {
+		autoparteCantidad.add(cant);
+	}
+
+	public int getId() {
 		return id;
 	}
 
@@ -17,11 +34,11 @@ public class Venta {
 		this.id = id;
 	}
 
-	public Date getFecha() {
+	public String getFecha() {
 		return fecha;
 	}
 
-	public void setFecha(Date fecha) {
+	public void setFecha(String fecha) {
 		this.fecha = fecha;
 	}
 
@@ -32,38 +49,27 @@ public class Venta {
 	public void setMontoTotal(double montoTotal) {
 		this.montoTotal = montoTotal;
 	}
-
-	public Usuario getUsuario() {
-		return usuario;
+	
+	public boolean DisminuirStock() {
+	    for (int i = 0; i < autopartepedido.size(); i++) {
+	    	Autoparte autoparte = autopartepedido.get(i);
+	    	int cantidad = autoparteCantidad.get(i);
+	    	
+	        if (VerificarStock(autoparte, cantidad)) {
+	            autoparte.RestarStock(cantidad);
+	        } else {
+	            System.out.println("No había suficiente stock para: " + autoparte.getModelo());
+	            return false;
+	        }
+	    }
+	    return true;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
+
+	public boolean VerificarStock(Autoparte autoparte, int cant) {
+	    return (autoparte.getStock() >= cant);
 	}
-
-	public MedioPago getMedioPago() {
-		return medioPago;
-	}
-
-	public void setMedioPago(MedioPago medioPago) {
-		this.medioPago = medioPago;
-	}
-
-	public String getDetalles() {
-		return detalles;
-	}
-
-	public void setDetalles(String detalles) {
-		this.detalles = detalles;
-	}
-
-	public double calcularMontoTotal() {
-        // Lógica para calcular el monto total de la venta según el medio de pago
-        // y aplicar descuentos/recargos si corresponde
-		return 0;
-    }
-
-    public void registrarVenta() {
-        // Lógica para registrar la venta y actualizar el stock de las autopartes vendidas
-    }
+	
+	public abstract double CalcularTotal();
+	
 }
